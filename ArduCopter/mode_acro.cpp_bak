@@ -55,7 +55,7 @@ float ModeAcro::apply_betaflight_expo(float input, float expo)
     	return input;
     }*/
     
-    /*const float deadband = 0.05f;
+    const float deadband = 0.05f;
     if (fabsf(input) < deadband) {
         return 0.0f;
     }
@@ -71,12 +71,9 @@ float ModeAcro::apply_betaflight_expo(float input, float expo)
     float input_normalized = (input - deadband * tt) / (1.0f - deadband);
 
     // 基础Expo曲线
-    float expo_output = input_normalized * (1.0f - expo) + powf(input_normalized, 3) * expo;*/
-    float expo_output = input * (1.0f - expo) + powf(input, 3) * expo;
+    float expo_output = input_normalized * (1.0f - expo) + powf(input_normalized, 3) * expo;
 
     //float expo_output = input*(1.0f-expo) + expo*input*input*input;
-    //(r * r * r) * rate * (1 - exp) + r * rate * exp
-    //float expo_output = powf(input, 3) * (1.0f - expo) + expo * input;
     return expo_output;
        
 }
@@ -150,8 +147,7 @@ void ModeAcro::run()
     //}
 
     // output pilot's throttle without angle boost
-    //attitude_control->set_throttle_out(pilot_desired_throttle, false, copter.g.throttle_filt);
-    attitude_control->set_throttle_out(pilot_desired_throttle, false, 0.0f);
+    attitude_control->set_throttle_out(pilot_desired_throttle, true, copter.g.throttle_filt);
 }
 
 bool ModeAcro::init(bool ignore_checks)

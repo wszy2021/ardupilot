@@ -38,10 +38,6 @@ bool ModeLoiter::init(bool ignore_checks)
     _precision_loiter_active = false;
 #endif
 
-    _loiter_start_ms = AP_HAL::millis();
-    _pitch_threshold_ms = 0;
-    _loiter_stable_checked = false;
-    _sticks_centered = false;
     return true;
 }
 
@@ -90,90 +86,6 @@ void ModeLoiter::run()
     float target_roll, target_pitch;
     float target_yaw_rate = 0.0f;
     float target_climb_rate = 0.0f;
-    
-    /*
-    if (copter.arming.is_armed()) {
-    const uint32_t now = AP_HAL::millis();
-
-    // 1. 获取三个通道的PWM值
-    const uint16_t roll_in = channel_roll->get_radio_in();     // 横滚通道
-    const uint16_t pitch_in = channel_pitch->get_radio_in();   // 俯仰通道
-    const uint16_t throttle_in = channel_throttle->get_radio_in(); // 油门通道
-
-    // 定义回中阈值（PWM中值1500，允许±50误差）
-    const uint16_t center_pwm = 1500;
-    const uint16_t pwm_threshold = 50;
-
-    // 2. 检测三个通道是否回中
-    bool roll_centered = (roll_in >= center_pwm - pwm_threshold) && 
-                         (roll_in <= center_pwm + pwm_threshold);
-    bool pitch_centered = (pitch_in >= center_pwm - pwm_threshold) && 
-                          (pitch_in <= center_pwm + pwm_threshold);
-    bool throttle_centered = (throttle_in >= center_pwm - pwm_threshold) && 
-                             (throttle_in <= center_pwm + pwm_threshold);
-
-    // 3. 更新摇杆回中状态（三个通道都回中才认为回中）
-    if (roll_centered && pitch_centered && throttle_centered) {
-        if (!_sticks_centered) {
-            // 摇杆刚回中，开始计时
-            _sticks_centered = true;
-            _loiter_start_ms = now;  // 重置稳定计时起点
-            _loiter_stable_checked = false;
-            _pitch_threshold_ms = 0;
-            // gcs().send_text(MAV_SEVERITY_INFO, "All sticks centered, start timer");
-        }
-    } else {
-        // 任意通道未回中，重置状态
-        // if (_sticks_centered) {
-        //     gcs().send_text(MAV_SEVERITY_INFO, "Stick moved, reset timer");
-        // }
-        _sticks_centered = false;
-        _loiter_stable_checked = false;
-        _pitch_threshold_ms = 0;
-    }
-
-    // 4. 仅在摇杆回中后开始稳定计时
-    if (_sticks_centered && !_loiter_stable_checked) {
-        if (now - _loiter_start_ms >= 3000) {  // 稳定3秒
-            _loiter_stable_checked = true;
-            // gcs().send_text(MAV_SEVERITY_INFO, "Loiter stable, monitoring pitch");
-        }
-    }
-
-    // 5. 俯仰角检测（仅在稳定后且摇杆保持回中）
-    if (_sticks_centered && _loiter_stable_checked) {
-        //float pitch_deg = degrees(ahrs.pitch);  // 获取俯仰角（度）
-        float pitch_rad = ahrs.get_pitch();
-        float pitch_deg = pitch_rad * (180.0f / M_PI);
-        
-
-        if (pitch_deg >= 1.0f) {  // 俯仰角超过5度
-            //if (_pitch_threshold_ms == 0) {
-            //    _pitch_threshold_ms = now;  // 记录首次超限时间
-                // gcs().send_text(MAV_SEVERITY_INFO, "Pitch threshold exceeded");
-            //}
-
-            // 持续超限1秒后切换模式
-            //if (now - _pitch_threshold_ms >= 10) {
-                _loiter_stable_checked = false;
-                set_mode(Mode::Number::ALT_HOLD, ModeReason::SCRIPTING);
-                //gcs().send_text(MAV_SEVERITY_INFO, "Switched to AltHold (pitch > 5deg)");
-                
-                // 重置状态，防止重复切换
-                _pitch_threshold_ms = 0;
-                _loiter_stable_checked = false;
-                _sticks_centered = false;
-                //return;
-            //}
-        } else {
-            _pitch_threshold_ms = 0;  // 俯仰角未超限，重置计时
-        }
-    }
-    }
-    
-    */
-    
-    
 
     // set vertical speed and acceleration limits
     pos_control->set_max_speed_accel_z(-get_pilot_speed_dn(), g.pilot_speed_up, g.pilot_accel_z);

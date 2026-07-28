@@ -395,6 +395,7 @@ public:
         AIR_MODE = 1 << 0,
         RATE_LOOP_ONLY = 1 << 1,
     };
+    
 
     virtual void run() override;
 
@@ -408,9 +409,10 @@ public:
     void air_mode_aux_changed();
     bool allows_save_trim() const override { return true; }
     bool allows_flip() const override { return true; }
+    
 
 protected:
-
+    
     const char *name() const override { return "ACRO"; }
     const char *name4() const override { return "ACRO"; }
 
@@ -419,6 +421,9 @@ protected:
     void get_pilot_desired_angle_rates(float roll_in, float pitch_in, float yaw_in, float &roll_out, float &pitch_out, float &yaw_out);
 
     float throttle_hover() const override;
+    
+    void get_pilot_desired_rates_rads_betaflight_style(float &roll_rads, float &pitch_rads, float &yaw_rads);
+    float apply_betaflight_expo(float input, float expo);
 
 private:
     bool disable_air_mode_reset;
@@ -1252,7 +1257,10 @@ private:
     bool _precision_loiter_enabled;
     bool _precision_loiter_active; // true if user has switched on prec loiter
 #endif
-
+    uint32_t _loiter_start_ms;      // 进入Loiter的时间（ms）
+    uint32_t _pitch_threshold_ms;  // 俯仰角超限开始时间（ms）
+    bool     _loiter_stable_checked;// 是否已检查稳定时间
+    bool     _sticks_centered;      // 摇杆是否已回中（包含油门）
 };
 
 

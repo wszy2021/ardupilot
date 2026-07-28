@@ -417,6 +417,37 @@ void AC_AttitudeControl::input_euler_rate_roll_pitch_yaw(float euler_roll_rate_c
     attitude_controller_run_quat();
 }
 
+/*
+void AC_AttitudeControl::input_rate_bf_roll_pitch_yaw_betaflight_style(float roll_rate_rads, float pitch_rate_rads, float yaw_rate_rads)
+{
+    // 直接使用速率控制，最小化姿态反馈
+    _rate_bf_target.x = roll_rate_rads;
+    _rate_bf_target.y = pitch_rate_rads;
+    _rate_bf_target.z = yaw_rate_rads;
+    
+    // 简化的PID控制，更接近Betaflight
+    _pid_rate_roll.set_input_filter_all(_rate_bf_target.x - _ahrs.get_gyro().x);
+    _pid_rate_pitch.set_input_filter_all(_rate_bf_target.y - _ahrs.get_gyro().y);
+    _pid_rate_yaw.set_input_filter_all(_rate_bf_target.z - _ahrs.get_gyro().z);
+    
+    // 直接输出到电机，减少额外处理
+    _actuators_roll_pitch.yaw = _pid_rate_yaw.get_pid();
+    _actuators_roll_pitch.pitch = _pid_rate_pitch.get_pid();
+    _actuators_roll_pitch.roll = _pid_rate_roll.get_pid();
+    
+    _ang_vel_target.x = input_shaping_ang_vel(_ang_vel_target.x, roll_rate_rads, get_accel_roll_max_radss(), _dt, _rate_rp_tc);
+    _ang_vel_target.y = input_shaping_ang_vel(_ang_vel_target.y, pitch_rate_rads, get_accel_pitch_max_radss(), _dt, _rate_rp_tc);
+    _ang_vel_target.z = input_shaping_ang_vel(_ang_vel_target.z, yaw_rate_rads, get_accel_yaw_max_radss(), _dt, _rate_y_tc);
+
+    // Update the unused targets attitude based on current attitude to condition mode change
+    _ahrs.get_quat_body_to_ned(_attitude_target);
+    _attitude_target.to_euler(_euler_angle_target);
+    // Convert body-frame angular velocity into euler angle derivative of desired attitude
+    ang_vel_to_euler_rate(_euler_angle_target, _ang_vel_target, _euler_rate_target);
+    _ang_vel_body = _ang_vel_target;
+}*/
+
+
 // Command an angular velocity with angular velocity feedforward and smoothing
 void AC_AttitudeControl::input_rate_bf_roll_pitch_yaw(float roll_rate_bf_cds, float pitch_rate_bf_cds, float yaw_rate_bf_cds)
 {
@@ -458,9 +489,13 @@ void AC_AttitudeControl::input_rate_bf_roll_pitch_yaw(float roll_rate_bf_cds, fl
 void AC_AttitudeControl::input_rate_bf_roll_pitch_yaw_2(float roll_rate_bf_cds, float pitch_rate_bf_cds, float yaw_rate_bf_cds)
 {
     // Convert from centidegrees on public interface to radians
-    float roll_rate_rads = radians(roll_rate_bf_cds * 0.01f);
-    float pitch_rate_rads = radians(pitch_rate_bf_cds * 0.01f);
-    float yaw_rate_rads = radians(yaw_rate_bf_cds * 0.01f);
+    //float roll_rate_rads = radians(roll_rate_bf_cds * 0.01f);
+    //float pitch_rate_rads = radians(pitch_rate_bf_cds * 0.01f);
+    //float yaw_rate_rads = radians(yaw_rate_bf_cds * 0.01f);
+    
+    float roll_rate_rads = roll_rate_bf_cds;
+    float pitch_rate_rads = pitch_rate_bf_cds;
+    float yaw_rate_rads = yaw_rate_bf_cds;
 
     // Compute acceleration-limited body frame rates
     // When acceleration limiting is enabled, the input shaper constrains angular acceleration about the axis, slewing

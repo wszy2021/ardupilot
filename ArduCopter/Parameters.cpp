@@ -441,7 +441,6 @@ const AP_Param::Info Copter::var_info[] = {
     // @User: Advanced
     GSCALAR(acro_trainer,   "ACRO_TRAINER",     (uint8_t)ModeAcro::Trainer::LIMITED),
 #endif
-
     // variables not in the g class which contain EEPROM saved variables
 
 #if AP_CAMERA_ENABLED
