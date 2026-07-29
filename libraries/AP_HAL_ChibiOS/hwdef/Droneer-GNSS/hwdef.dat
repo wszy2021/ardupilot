@@ -1,0 +1,152 @@
+# hw definition file for processing by chibios_pins.py
+# MCU class and specific type
+
+# MCU class and specific type
+MCU STM32G4xx STM32G474xx
+
+FLASH_RESERVE_START_KB 36
+
+STORAGE_FLASH_PAGE 16
+define HAL_STORAGE_SIZE 800
+
+# board ID for firmware load
+APJ_BOARD_ID 5804
+
+# setup build for a peripheral firmware
+env AP_PERIPH 1
+
+# crystal frequency
+OSCILLATOR_HZ 16000000
+
+define CH_CFG_ST_FREQUENCY 1000000
+
+STM32_ST_USE_TIMER 5
+
+# assume 512k flash part
+FLASH_SIZE_KB 512
+
+# ensure NRST_MODE is set to "Reset input only". This fixes
+# an issue with resetting the CAN node and firmware update
+define HAL_FLASH_SET_NRST_MODE 0x01
+
+# debug on USART3
+STDOUT_SERIAL SD3
+STDOUT_BAUDRATE 57600
+
+# order of UARTs
+SERIAL_ORDER USART3 USART2
+
+# sensor power control
+PB15 VDD_3V3_SENSORS_EN OUTPUT HIGH
+
+# WS2812 LED
+PA5 TIM2_CH1 TIM2 PWM(1)
+
+PB12 SAFE_LED OUTPUT LOW
+define SAFE_LED_ON 1
+
+# PWM output for buzzer
+PA10 TIM1_CH3 TIM1 GPIO(77) LOW ALARM
+
+# safety button
+PB13 SAFE_BUTTON INPUT PULLDOWN
+
+# USART3, debug
+PB10 USART3_TX USART3 NODMA
+PB11 USART3_RX USART3 NODMA
+
+# USART2, GPS
+PA2 USART2_TX USART2
+PA3 USART2_RX USART2
+
+# SWD debugging
+PA13 JTMS-SWDIO SWD
+PA14 JTCK-SWCLK SWD
+
+# I2C4 bus
+PC7 I2C4_SDA I2C4
+PC6 I2C4_SCL I2C4
+
+define STM32_I2C_USE_DMA FALSE
+
+define HAL_I2C_INTERNAL_MASK 0
+
+# I2C buses
+I2C_ORDER I2C4
+
+# GPS PPS
+#PA15 GPS_PPS_IN INPUT
+
+# compass
+COMPASS RM3100 I2C:0:0x20 false ROTATION_YAW_90
+
+# barometer
+BARO ICP201XX I2C:0:0x63
+
+define HAL_BARO_ALLOW_INIT_NO_BARO
+
+define HAL_USE_ADC FALSE
+define STM32_ADC_USE_ADC1 FALSE
+define HAL_DISABLE_ADC_DRIVER TRUE
+
+define HAL_NO_GPIO_IRQ
+
+# avoid RCIN thread to save memory
+define HAL_NO_RCIN_THREAD
+
+define HAL_USE_RTC FALSE
+define DISABLE_SERIAL_ESC_COMM TRUE
+
+define DMA_RESERVE_SIZE 0
+
+define HAL_DISABLE_LOOP_DELAY
+
+# enable CAN support
+
+PA11 CAN1_RX CAN1
+PA12 CAN1_TX CAN1
+#PC13 GPIO_CAN1_SILENT OUTPUT PUSHPULL SPEED_LOW LOW
+
+define CAN_APP_NODE_NAME "org.Droneer_gnss"
+
+define HAL_NO_MONITOR_THREAD
+
+define HAL_DEVICE_THREAD_STACK 768
+
+# we setup a small defaults.parm
+define AP_PARAM_MAX_EMBEDDED_PARAM 256
+
+# disable dual GPS and GPS blending to save flash space
+define GPS_MAX_RECEIVERS 1
+define GPS_MAX_INSTANCES 1
+define HAL_COMPASS_MAX_SENSORS 1
+
+DMA_NOSHARE USART2*
+
+# add support for moving baseline yaw
+define GPS_MOVING_BASELINE 1
+
+# GPS+MAG+LEDs
+define HAL_PERIPH_ENABLE_GPS
+define HAL_PERIPH_ENABLE_MAG
+define HAL_PERIPH_ENABLE_BARO
+define HAL_PERIPH_ENABLE_BUZZER
+#define HAL_PERIPH_ENABLE_RC_OUT
+#define HAL_PERIPH_ENABLE_NOTIFY
+
+
+# GPS on 2nd port
+define HAL_PERIPH_GPS_PORT_DEFAULT 1
+
+# do direct neopixel LED output to enable the 'rainbow' effect on
+# startup
+define HAL_PERIPH_NEOPIXEL_CHAN_WITHOUT_NOTIFY 0
+define HAL_PERIPH_NEOPIXEL_COUNT_WITHOUT_NOTIFY 8
+
+define HAL_PERIPH_ENABLE_BUZZER_WITHOUT_NOTIFY 1
+
+# keep ROMFS uncompressed as we don't have enough RAM
+# to uncompress the bootloader at runtime
+env ROMFS_UNCOMPRESSED True
+
+define DEFAULT_NTF_LED_TYPES 455
